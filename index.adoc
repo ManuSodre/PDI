@@ -238,7 +238,7 @@ image::homomorficFilter.png[1000,10000,float="center",align="center"]
 === 11.1 - EXERCÍCIO:
 [.text-left]
 
-  Utilizando os programas exemplos/canny.cpp e exemplos/pontilhismo.cpp como referência, implemente um programa cannypoints.cpp.
+  *Utilizando os programas exemplos/canny.cpp e exemplos/pontilhismo.cpp como referência, implemente um programa cannypoints.cpp.
   A idéia é usar as bordas produzidas pelo algoritmo de Canny para melhorar a qualidade da imagem pontilhista gerada. A forma como 
   a informação de borda será usada é livre. Entretanto, são apresentadas algumas sugestões de técnicas que poderiam ser utilizadas: 
   Desenhar pontos grandes na imagem pontilhista básica;
