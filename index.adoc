@@ -355,7 +355,7 @@ image::imagem.jpg[500,500,float="center",align="center"]
 
 E como saída foi obtida a imagem abaixo:
 
-image::resultadocanny.png[500,500,float="center",align="center"]
+image::resultadocanny.png[1000,10000,float="center",align="center"]
 
 
 
