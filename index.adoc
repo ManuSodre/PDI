@@ -348,8 +348,8 @@ Nesta atividade o objetivo era o desenvolvimento do filtro de Canny para gerar u
 
 Para esta aplicação foi utilizada como entrada, a imagem abaixo:
 
-[.text-center]
-.Imagem de entrada para aplicação do algoritmo
+        [.text-center]
+        .Imagem de entrada para aplicação do algoritmo
 
 image::imagem.jpg[500,500,float="center",align="center"]
 
