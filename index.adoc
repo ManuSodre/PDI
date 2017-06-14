@@ -346,6 +346,11 @@ Nesta atividade o objetivo era o desenvolvimento do filtro de Canny para gerar u
 
 ----
 
+Para esta aplicação foi utilizada como entrada, a imagem abaixo:
+
+image::imagem.jpg[500,500,float="center",align="center"]
+
+
 
 
 
