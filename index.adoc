@@ -353,6 +353,9 @@ Para esta aplicação foi utilizada como entrada, a imagem abaixo:
 
 image::imagem.jpg[500,500,float="center",align="center"]
 
+E como saída foi obtida a imagem abaixo:
+
+image::resultadocanny.jpg[500,500,float="center",align="center"]
 
 
 
