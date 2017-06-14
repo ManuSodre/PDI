@@ -248,3 +248,9 @@ image::homomorficFilter.png[1000,10000,float="center",align="center"]
 
 [.text-center]
 === SOLUÇÃO:
+
+O algoritmo de Canny de fato é útil para diversas aplicações em processamento de imagens e visão artificial. Informações de bordas podem ser usadas para melhorar algoritmos de segmentação automática ou para encontrar objetos em cenas e pontos de interesse. O pontilhismo é uma técnica de desenho impressionista onde o quadro é pintado usando apenas pontos.
+
+Nesta atividade o objetivo era o desenvolvimento do filtro de Canny para gerar uma imagem com pontilhismo. Em que inicialmente foi aplicado na imagem o processo do pontilhismo, e em seguida, a imagem bruta passou por algumas iterações do filtro de Canny, para que fosse possível delimitar suas bordas. Em cada uma das iterações o limiar do filtro é alterado com a intenção de obter uma imagem com menos bordas. Para as bordas ficarem mais destacadas foi necessário percorrer a imagem filtrada e desenhar um círculo em cada pixel que possuísse um tom de cinza maior que zero. E como saída é gereda e salva duas imagens editadas, onde a primeira(Imagem pontilhista.jpg) é a imagem com efeito de pontilhismo aplicado. 
+
+

@@ -8,6 +8,8 @@
 #include <ctime>
 #include <cstdlib>
 
+
+
 using namespace std;
 using namespace cv;
 
@@ -77,17 +79,15 @@ int main(int argc, char** argv){
      for(int i=0; i<height; i++ ){
         for(int j=0; j<width; j++){
            if(borderImagemOriginal.at<uchar>(i,j)>0){
-              gray = Original.at<uchar>(i,j);
-              circle(imagemComPontilhismo,
-                     cv::Point(j,i),
-                     raio,
-                     CV_RGB(gray,gray,gray),
-                     -1,
-                     CV_AA);
+              gray = imagemOriginal.at<uchar>(i,j);
+              circle(imagemComPontilhismo, cv::Point(j,i), raio, CV_RGB(gray,gray,gray), -1, CV_AA);
            }
         }
      }
   }
+
+  namedWindow( imagemComPontilhismo, CV_WINDOW_AUTOSIZE );
+  namedWindow( "Gray image", CV_WINDOW_AUTOSIZE );
 
   imshow("Imagem com CannyPoints", imagemComPontilhismo);
   imwrite("imgfiltroCannyPoints.jpg", imagemComPontilhismo);

@@ -44,6 +44,7 @@ int main(int argc, char** argv){
 
   Original.copyTo(Pontilhismo);
 
+  //Executa o pontilhismo;
   for(auto i : xrange){
     random_shuffle(yrange.begin(), yrange.end());
     for(auto j : yrange){
@@ -54,8 +55,10 @@ int main(int argc, char** argv){
     }
   }
 
+  imshow("Imagem Pontilhista", Pontilhismo);
   imwrite("imagemComPontilhismo.jpg", Pontilhismo);
 
+   //Aplica Canny
    for(int z=0; z<5; z++){
      Canny(Original, borderOriginalImage, 10*z, 50*z);
      int raio = 5-z;
@@ -64,14 +67,14 @@ int main(int argc, char** argv){
         for(int j=0; j<width; j++){
            if(borderOriginalImage.at<uchar>(i,j) == 255){
               gray = Original.at<uchar>(i,j);
-              circle(efeito, cv::Point(j,i), raio, CV_RGB(gray,gray,gray), -1, CV_AA);
+              circle(Pontilhismo, cv::Point(j,i), raio, CV_RGB(gray,gray,gray), -1, CV_AA);
              }
         }
     }
     
-    Limiar = Limiar*10;
+    //Limiar = Limiar*10;
   }
-  imshow("CannyPoints", Pontilhismo);
+  imshow("Pontilhismo", Pontilhismo);
   imwrite("imagemComPontilhismo.jpg", Pontilhismo);
  
 
