@@ -247,3 +247,6 @@ image::homomorficFilter.png[1000,10000,float="center",align="center"]
   nas posições encontradas. A Figura Pontilhismo aplicado à imagem Lena foi desenvolvida usando essa técnica.
   Escolha uma imagem de seu gosto e aplique a técnica que você desenvolveu.
   Descreva no seu relatório detalhes do procedimento usado para criar sua técnica pontilhista.
+
+[.text-center]
+=== SOLUÇÃO:
