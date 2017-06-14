@@ -699,11 +699,99 @@ A idéia é usar as bordas produzidas pelo algoritmo de Canny para melhorar a qu
 </div>
 <div class="sect2 text-center">
 <h3 id="_soluÇÃo_2">SOLUÇÃO:</h3>
-<div class="paragraph">
+<div class="paragraph text-left">
 <p>O algoritmo de Canny de fato é útil para diversas aplicações em processamento de imagens e visão artificial. Informações de bordas podem ser usadas para melhorar algoritmos de segmentação automática ou para encontrar objetos em cenas e pontos de interesse. O pontilhismo é uma técnica de desenho impressionista onde o quadro é pintado usando apenas pontos.</p>
 </div>
-<div class="paragraph">
+<div class="paragraph text-left">
 <p>Nesta atividade o objetivo era o desenvolvimento do filtro de Canny para gerar uma imagem com pontilhismo. Em que inicialmente foi aplicado na imagem o processo do pontilhismo, e em seguida, a imagem bruta passou por algumas iterações do filtro de Canny, para que fosse possível delimitar suas bordas. Em cada uma das iterações o limiar do filtro é alterado com a intenção de obter uma imagem com menos bordas. Para as bordas ficarem mais destacadas foi necessário percorrer a imagem filtrada e desenhar um círculo em cada pixel que possuísse um tom de cinza maior que zero. E como saída é gereda e salva duas imagens editadas, onde a primeira(Imagem pontilhista.jpg) é a imagem com efeito de pontilhismo aplicado.</p>
+</div>
+<div class="listingblock text-left">
+<div class="title">cannypoints.cpp</div>
+<div class="content">
+<pre>  #include &lt;iostream&gt;
+  #include &lt;opencv2/opencv.hpp&gt;
+  #include &lt;fstream&gt;
+  #include &lt;iomanip&gt;
+  #include &lt;vector&gt;
+  #include &lt;algorithm&gt;
+  #include &lt;numeric&gt;
+  #include &lt;ctime&gt;
+  #include &lt;cstdlib&gt;
+
+  using namespace std;
+  using namespace cv;
+
+  #define STEP 5
+  #define JITTER 3
+  #define RAIO 5
+
+  int main(int argc, char** argv){
+  Mat Original, borderOriginalImage;
+  Mat Pontilhismo;
+  int x, y, width, height, gray;
+  //arrays de índices que servirão para identificar elementos da imagem de referência
+  vector&lt;int&gt; yrange;
+  vector&lt;int&gt; xrange;
+
+  srand(time(0));
+
+  Original= imread("imagem.jpg" ,CV_LOAD_IMAGE_GRAYSCALE);
+
+  width = Original.size().width;
+  height = Original.size().height;
+  xrange.resize(height/STEP);
+  yrange.resize(width/STEP);
+  iota(xrange.begin(), xrange.end(), 0);
+  iota(yrange.begin(), yrange.end(), 0);
+
+  for(uint i=0; i&lt;xrange.size(); i++){
+    xrange[i]= xrange[i]*STEP+STEP/2;
+  }
+
+  for(uint i=0; i&lt;yrange.size(); i++){
+    yrange[i]= yrange[i]*STEP+STEP/2;
+  }
+
+  Original.copyTo(Pontilhismo);
+
+  //Executa o pontilhismo;
+  for(auto i : xrange){
+    random_shuffle(yrange.begin(), yrange.end());
+    for(auto j : yrange){
+      x = i+rand()%(2*JITTER)-JITTER+1;
+      y = j+rand()%(2*JITTER)-JITTER+1;
+      gray = Original.at&lt;uchar&gt;(x,y);
+      circle(Pontilhismo, cv::Point(y,x), RAIO, CV_RGB(gray,gray,gray), -1, CV_AA);
+    }
+  }
+
+  imshow("Imagem Pontilhista", Pontilhismo);
+  imwrite("imagemComPontilhismo.jpg", Pontilhismo);
+
+   //Aplica Canny
+   for(int z=0; z&lt;5; z++){
+     Canny(Original, borderOriginalImage, 10*z, 50*z);
+     int raio = 5-z;
+
+     for(int i=0; i&lt;height; i++ ){
+        for(int j=0; j&lt;width; j++){
+           if(borderOriginalImage.at&lt;uchar&gt;(i,j) == 255){
+              gray = Original.at&lt;uchar&gt;(i,j);
+              circle(Pontilhismo, cv::Point(j,i), raio, CV_RGB(gray,gray,gray), -1, CV_AA);
+             }
+        }
+    }
+
+
+  }
+  imshow("Pontilhismo", Pontilhismo);
+  imwrite("imagemComPontilhismo.jpg", Pontilhismo);
+
+
+   waitKey();
+  return 0;
+}</pre>
+</div>
 </div>
 </div>
 </div>
@@ -711,7 +799,7 @@ A idéia é usar as bordas produzidas pelo algoritmo de Canny para melhorar a qu
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-06-14 16:53:12 BRT
+Last updated 2017-06-14 16:56:41 BRT
 </div>
 </div>
 <script type="text/x-mathjax-config">

@@ -72,7 +72,7 @@ int main(int argc, char** argv){
         }
     }
     
-    //Limiar = Limiar*10;
+    
   }
   imshow("Pontilhismo", Pontilhismo);
   imwrite("imagemComPontilhismo.jpg", Pontilhismo);
