@@ -614,6 +614,90 @@ int main() {
 </div>
 </div>
 <div class="sect1 text-center">
+<h2 id="_preenchendo_regiÕes">PREENCHENDO REGIÕES</h2>
+<div class="sectionbody">
+<div class="sect2 text-center">
+<h3 id="_4_2_exercÍcios">4.2 - EXERCÍCIOS:</h3>
+<div class="literalblock">
+<div class="content">
+<pre>1 - Observando-se o programa labeling.cpp como exemplo, é possível verificar que caso existam mais de 255 objetos na cena, o processo de rotulação poderá ficar comprometido. Identifique a situação em que isso ocorre e proponha uma solução para este problema.</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>2 - Aprimore o algoritmo de contagem apresentado para identificar regiões com ou sem buracos internos que existam na cena. Assuma que objetos com mais de um buraco podem existir. Inclua suporte no seu algoritmo para não contar bolhas que tocam as bordas da imagem. Não se pode presumir, a priori, que elas tenham buracos ou não.</pre>
+</div>
+</div>
+</div>
+<div class="sect2 text-center">
+<h3 id="_soluÇÃo_2">SOLUÇÃO:</h3>
+<div class="paragraph">
+<p>1) Mesmo que o contador seja maior que os 255, só há como o computador representar 255 tons de cinza. Dessa forma, na forma como o programa labeling.cpp está implementado, depois que o contador ultrapassar o nível de cinza 255, todos os objetos que passarem pelo processamento do floodFill terão seus níveis de cinza iguais a 255.</p>
+</div>
+<div class="paragraph">
+<p>Solução proposta para o problema:</p>
+</div>
+<div class="listingblock text-left">
+<div class="title">contagem.cpp</div>
+<div class="content">
+<pre>#include &lt;iostream&gt;
+#include &lt;opencv2/opencv.hpp&gt;
+
+using namespace cv;
+using namespace std;
+
+int main(int argc, char** argv){
+    Mat image;
+    int width, height;
+    int contadorObjetos, tonDeCinza;
+
+    CvPoint p;
+    image = imread(argv[1],CV_LOAD_IMAGE_GRAYSCALE);
+
+    if(!image.data){
+        std::cout &lt;&lt; "imagem nao carregou corretamente\n";
+        return(-1);
+    }
+    width=image.size().width;
+    height=image.size().height;
+
+    p.x=0;
+    p.y=0;
+
+    // busca objetos com buracos presentes
+    tonDeCinza=0;
+    contadorObjetos = 0;
+
+    for(int i=0; i&lt;height; i++){
+        for(int j=0; j&lt;width; j++){
+          if(image.at&lt;uchar&gt;(i,j) == 255){
+            // achou um objeto
+            tonDeCinza++;
+            contadorObjetos++;
+
+            p.x=j;
+            p.y=i;
+            floodFill(image,p,tonDeCinza);
+
+            if(tonDeCinza &gt;= 255)
+                tonDeCinza = 0;
+          }
+        }
+    }
+
+    cout &lt;&lt; "Qtd. objetos: " &lt;&lt; contadorObjetos &lt;&lt; endl;
+
+    imshow("image", image);
+    waitKey();
+
+    return 0;
+}</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 text-center">
 <h2 id="_atividades_unidade_2">ATIVIDADES UNIDADE 2:</h2>
 <div class="sectionbody">
 
@@ -631,7 +715,7 @@ int main() {
 </div>
 </div>
 <div class="sect2 text-center">
-<h3 id="_soluÇÃo_2">SOLUÇÃO:</h3>
+<h3 id="_soluÇÃo_3">SOLUÇÃO:</h3>
 <div class="paragraph text-center">
 <p><strong>Filtragem Homomórfica</strong></p>
 </div>
@@ -895,7 +979,7 @@ A idéia é usar as bordas produzidas pelo algoritmo de Canny para melhorar a qu
 </div>
 </div>
 <div class="sect2 text-center">
-<h3 id="_soluÇÃo_3">SOLUÇÃO:</h3>
+<h3 id="_soluÇÃo_4">SOLUÇÃO:</h3>
 <div class="paragraph text-left">
 <p>O algoritmo de Canny de fato é útil para diversas aplicações em processamento de imagens e visão artificial. Informações de bordas podem ser usadas para melhorar algoritmos de segmentação automática ou para encontrar objetos em cenas e pontos de interesse. O pontilhismo é uma técnica de desenho impressionista onde o quadro é pintado usando apenas pontos.</p>
 </div>
@@ -1013,7 +1097,7 @@ A idéia é usar as bordas produzidas pelo algoritmo de Canny para melhorar a qu
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-07-01 19:23:47 BRT
+Last updated 2017-07-01 20:00:35 BRT
 </div>
 </div>
 <script type="text/x-mathjax-config">
