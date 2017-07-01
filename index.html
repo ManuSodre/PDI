@@ -425,20 +425,86 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1 text-center">
 <h2 id="_atividades_unidade_1">ATIVIDADES UNIDADE 1:</h2>
 <div class="sectionbody">
+
+</div>
+</div>
+<div class="sect1 text-center">
+<h2 id="_manipulando_pixels_em_uma_imagem">MANIPULANDO PIXELS EM UMA IMAGEM</h2>
+<div class="sectionbody">
 <div class="sect2">
 <h3 id="_3_2_exercÍcio">3.2 - EXERCÍCIO:</h3>
 <div class="sect3">
 <h4 id="_regiões">Regiões:</h4>
 <div class="literalblock text-left">
 <div class="content">
-<pre>Utilizando o programa exemplos/pixels.cpp como referência, implemente um programa regions.cpp. Esse programa deverá solicitar ao usuário as coordenadas de dois pontos P1P1 e P2P2 localizados dentro dos limites do tamanho da imagem e exibir que lhe for fornecida. Entretanto, a região definida pelo retângulo de vértices opostos definidos pelos pontos P1P1 e P2P2 será exibida com o negativo da imagem na região correspondente. O efeito é ilustrado na Figura Regiões.</pre>
+<pre>Utilizando o programa exemplos/pixels.cpp como referência, implemente um programa regions.cpp. Esse programa deverá solicitar ao usuário as coordenadas de dois pontos P1P1 e P2P2 localizados dentro dos limites do tamanho da imagem e exibir que lhe for fornecida. Entretanto, a região definida pelo retângulo de vértices opostos definidos pelos pontos P1P1 e P2P2 será exibida com o negativo da imagem na região correspondente.</pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect2 text-center">
 <h3 id="_soluÇÃo">SOLUÇÃO:</h3>
+<div class="paragraph">
+<p>O exercício em questão foi feito utilizando-se da imagem abaixo:</p>
+</div>
+<div class="imageblock" style="text-align: center;float: center">
+<div class="content">
+<img src="imagem.jpg" alt="500" width="500">
+</div>
+</div>
+<div class="paragraph">
+<p>E após execução do algoritmo regions implementado obtivemos o resultado abaixo:</p>
+</div>
+<div class="imageblock" style="text-align: center;float: center">
+<div class="content">
+<img src="regions.png" alt="500" width="500">
+</div>
+</div>
+<div class="listingblock text-left">
+<div class="content">
+<pre>#include &lt;cv.h&gt;
+#include &lt;highgui.h&gt;
 
+#include &lt;stdio.h&gt;
+
+#include &lt;iostream&gt;
+
+#include &lt;string.h&gt;
+
+using namespace std;
+using namespace cv;
+
+int main(int, char**){
+  Mat image;
+  Vec3b val;
+  int x1,x2,y1,y2;
+
+  image= imread("imagem.jpg",CV_LOAD_IMAGE_GRAYSCALE);
+
+  cout &lt;&lt; "Digite P1 : ";
+  cin &gt;&gt;  x1;
+  cout &lt;&lt; "Digite P1 : ";
+  cin &gt;&gt;  y1;
+  cout &lt;&lt; "Digite P2 : ";
+  cin &gt;&gt;  x2;
+  cout &lt;&lt; "Digite P2 : ";
+  cin &gt;&gt;  y2;
+
+   for (int i = x1; i &lt; x2; ++i)
+        {
+             for (int j = y1; j &lt; y2; ++j)
+             {
+            image.at&lt;uchar&gt;(i,j) = 255 - image.at&lt;uchar&gt;(i,j);
+         }
+        }
+
+
+  imshow("janela", image);
+  waitKey();
+  return 0;
+}</pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -842,7 +908,7 @@ A idéia é usar as bordas produzidas pelo algoritmo de Canny para melhorar a qu
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-07-01 18:11:38 BRT
+Last updated 2017-07-01 18:47:50 BRT
 </div>
 </div>
 <script type="text/x-mathjax-config">
