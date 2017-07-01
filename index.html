@@ -521,141 +521,91 @@ int main(int, char**){
 <div class="paragraph">
 <p>Código trocarecioes.cpp</p>
 </div>
-<div class="paragraph">
-<p>List:trocaregioes.cpp
-#include &lt;opencv2/core/core.hpp&gt;
+<div class="listingblock text-left">
+<div class="content">
+<pre>#include &lt;opencv2/core/core.hpp&gt;
 #include &lt;opencv2/highgui/highgui.hpp&gt;
 #include &lt;opencv2/imgproc/imgproc.hpp&gt;
 #include &lt;iostream&gt;
 #include &lt;algorithm&gt;
 #include &lt;stdlib.h&gt;
-#include &lt;time.h&gt;</p>
-</div>
-<div class="paragraph">
-<p>using namespace cv;
-using namespace std;</p>
-</div>
-<div class="paragraph">
-<p>int px_1, py_1, px_2, py_2;
+#include &lt;time.h&gt;
+
+using namespace cv;
+using namespace std;
+
+int px_1, py_1, px_2, py_2;
 bool clicado = false;
 Mat imgOriginal;
 Mat imgGrayscale;
 Mat imgResult;
-Mat listOfRoi[4];</p>
-</div>
-<div class="paragraph">
-<p>void pickARoi() {
-    int index[4] = { 0,1,2,3 };</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>srand(time(0));
-random_shuffle(begin(index), end(index));</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>int ind1 = index[0];
-int ind2 = index[1];
-int ind3 = index[2];
-int ind4 = index[3];</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre> // imprimindo apenas para checar a ordem
-cout &lt;&lt; "\n\nOrdem : { " &lt;&lt; ind1 &lt;&lt; ", " &lt;&lt; ind2 &lt;&lt; ", " &lt;&lt; ind3 &lt;&lt; ", " &lt;&lt; ind4 &lt;&lt; " }\n\n";</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>    listOfRoi[ind1].copyTo(imgResult(Rect(0,                    0,                          listOfRoi[ind1].cols,   listOfRoi[ind1].rows)));
+Mat listOfRoi[4];
+
+
+void pickARoi() {
+    int index[4] = { 0,1,2,3 };
+
+    srand(time(0));
+    random_shuffle(begin(index), end(index));
+
+    int ind1 = index[0];
+    int ind2 = index[1];
+    int ind3 = index[2];
+    int ind4 = index[3];
+
+    // imprimindo apenas para checar a ordem
+   cout &lt;&lt; "\n\nOrdem : { " &lt;&lt; ind1 &lt;&lt; ", " &lt;&lt; ind2 &lt;&lt; ", " &lt;&lt; ind3 &lt;&lt; ", " &lt;&lt; ind4 &lt;&lt; " }\n\n";
+
+    listOfRoi[ind1].copyTo(imgResult(Rect(0,                    0,                          listOfRoi[ind1].cols,   listOfRoi[ind1].rows)));
     listOfRoi[ind2].copyTo(imgResult(Rect(listOfRoi[ind1].cols, 0,                          listOfRoi[ind2].cols,   listOfRoi[ind2].rows)));
     listOfRoi[ind3].copyTo(imgResult(Rect(0,                    listOfRoi[ind1].rows,       listOfRoi[ind3].cols,   listOfRoi[ind3].rows)));
     listOfRoi[ind4].copyTo(imgResult(Rect(listOfRoi[ind1].cols, listOfRoi[ind1].rows,       listOfRoi[ind4].cols,   listOfRoi[ind4].rows)));
-}</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>int main() {</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>string arquivo;
-cout &lt;&lt; "Digite o nome do arquivo : ";
-cin &gt;&gt; arquivo;
-imgOriginal = imread(arquivo);</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>if (imgOriginal.empty()) {
-    cout &lt;&lt; "error: o arquivo --&gt; " &lt;&lt; arquivo &lt;&lt; " &lt;-- n„o pode ser lido!\n\n";
-    system("pause");
-    return(0);                                                                              // saindo do programa
-}</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>cvtColor(imgOriginal, imgGrayscale, CV_BGR2GRAY);</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>namedWindow("imgOriginal", CV_WINDOW_AUTOSIZE);
-namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
-namedWindow("imgResult", CV_WINDOW_AUTOSIZE);</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>int col_half = imgOriginal.cols / 2;
-int row_half = imgOriginal.rows / 2;</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>cout &lt;&lt; "\n\nWidth : " &lt;&lt; imgOriginal.cols &lt;&lt; "px\n";
-cout &lt;&lt; "Height : " &lt;&lt; imgOriginal.rows &lt;&lt; "px\n\n";</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>Rect roi1(0,            0,          col_half,   row_half);
-Rect roi2(col_half,     0,          col_half,   row_half);
-Rect roi3(0,            row_half,   col_half,   row_half);
-Rect roi4(col_half,     row_half,   col_half,   row_half);</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>listOfRoi[0] = Mat(imgGrayscale, roi1);
-listOfRoi[1] = Mat(imgGrayscale, roi2);
-listOfRoi[2] = Mat(imgGrayscale, roi3);
-listOfRoi[3] = Mat(imgGrayscale, roi4);</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>imgResult = Mat(imgGrayscale.rows, imgGrayscale.cols, imgGrayscale.type());</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>pickARoi();</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>imshow("imgOriginal", imgOriginal);
-imshow("imgGrayscale", imgGrayscale);
-imshow("imgResult", imgResult);</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>    waitKey(0);
+}
+
+int main() {
+
+    string arquivo;
+    cout &lt;&lt; "Digite o nome do arquivo : ";
+    cin &gt;&gt; arquivo;
+    imgOriginal = imread(arquivo);
+
+    if (imgOriginal.empty()) {
+        cout &lt;&lt; "error: o arquivo --&gt; " &lt;&lt; arquivo &lt;&lt; " &lt;-- n„o pode ser lido!\n\n";
+        system("pause");
+        return(0);                                                                              // saindo do programa
+    }
+
+    cvtColor(imgOriginal, imgGrayscale, CV_BGR2GRAY);
+
+    namedWindow("imgOriginal", CV_WINDOW_AUTOSIZE);
+    namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
+    namedWindow("imgResult", CV_WINDOW_AUTOSIZE);
+
+    int col_half = imgOriginal.cols / 2;
+    int row_half = imgOriginal.rows / 2;
+
+    cout &lt;&lt; "\n\nWidth : " &lt;&lt; imgOriginal.cols &lt;&lt; "px\n";
+    cout &lt;&lt; "Height : " &lt;&lt; imgOriginal.rows &lt;&lt; "px\n\n";
+
+    Rect roi1(0,            0,          col_half,   row_half);
+    Rect roi2(col_half,     0,          col_half,   row_half);
+    Rect roi3(0,            row_half,   col_half,   row_half);
+    Rect roi4(col_half,     row_half,   col_half,   row_half);
+
+    listOfRoi[0] = Mat(imgGrayscale, roi1);
+    listOfRoi[1] = Mat(imgGrayscale, roi2);
+    listOfRoi[2] = Mat(imgGrayscale, roi3);
+    listOfRoi[3] = Mat(imgGrayscale, roi4);
+
+    imgResult = Mat(imgGrayscale.rows, imgGrayscale.cols, imgGrayscale.type());
+
+    pickARoi();
+
+    imshow("imgOriginal", imgOriginal);
+    imshow("imgGrayscale", imgGrayscale);
+    imshow("imgResult", imgResult);
+
+    waitKey(0);
     return(0);
 }</pre>
 </div>
@@ -1063,7 +1013,7 @@ A idéia é usar as bordas produzidas pelo algoritmo de Canny para melhorar a qu
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-07-01 19:19:59 BRT
+Last updated 2017-07-01 19:23:47 BRT
 </div>
 </div>
 <script type="text/x-mathjax-config">
