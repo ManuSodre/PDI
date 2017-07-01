@@ -25,6 +25,8 @@ E após execução do algoritmo regions implementado obtivemos o resultado abaix
 
 image::regions.png[500,500,float="center",align="center"]
 
+.regions.cpp
+
 [source,cpp,numbered]
 [.text-left]
 
@@ -81,7 +83,9 @@ Após implementação e execução do programa trocaregioes.cpp foi obtido o res
 
 image::trocaregioes.png[800,800,float="center",align="center"]
 
-Código trocarecioes.cpp
+Código trocaregioes.cpp
+
+.trocaregioes.cpp
 
 [source,cpp,numbered]
 [.text-left]
@@ -189,6 +193,7 @@ int main() {
 [.text-center]
 === SOLUÇÃO:
 
+[.text-left]
 1) Mesmo que o contador seja maior que os 255, só há como o computador representar 255 tons de cinza. Dessa forma, na forma como o programa labeling.cpp está implementado, depois que o contador ultrapassar o nível de cinza 255, todos os objetos que passarem pelo processamento do floodFill terão seus níveis de cinza iguais a 255.
 
 Solução proposta para o problema:
@@ -197,7 +202,6 @@ Solução proposta para o problema:
 
 [source,cpp,numbered]
 [.text-left]
-
 
 ----
 
@@ -255,6 +259,95 @@ int main(int argc, char** argv){
 }
 
 ----
+
+[.text-left]
+2)Para a segunda parte do exercício foi implementado o programa abaixo em que ntes de tudo, desenhamos um retângulo com nível de cinza igual a 255 na borda da imagem. Depois disso, utilizamos a função floodFill no primeiro pixel da imagem mudando os valores dos tons dos pixels para zero. E com isso, os objetos que estavam em contato com esse retangulo foram imediatamente excluidos.
+
+.buracos.cpp
+
+[source,cpp,numbered]
+[.text-left]
+
+----
+
+#include <iostream>
+#include <cv.h>
+#include "opencv2/highgui/highgui.hpp"
+#include <opencv2/opencv.hpp>
+
+using namespace cv;
+using namespace std;
+
+int main(int argc, char** argv){
+    Mat image;
+    int width, height;
+    const int tonDeCinzaPreto = 0, tonDeCinzaBranco = 255;
+    const int novaCorFundo = 100, novaCorObjeto = 200;
+    int contadorObjetosSemBuraco, contadorObjetosComBuraco;
+
+    CvPoint p;
+    image = imread(argv[1],CV_LOAD_IMAGE_GRAYSCALE);
+
+    if(!image.data){
+        std::cout << "imagem nao carregou corretamente\n";
+
+        return(-1);
+    }
+
+    width = image.size().width;
+    height = image.size().height;
+
+    p.x = 0;
+    p.y = 0;
+
+    contadorObjetosSemBuraco = 0;
+    contadorObjetosComBuraco = 0;
+
+    Mat novaImagem = Mat::ones(width + 2, height + 2, CV_8U)*tonDeCinzaBranco;
+    Mat(image, Rect(0, 0, width, height)).copyTo(Mat(novaImagem, Rect(1,1,width, height)));
+
+    floodFill(novaImagem,p,tonDeCinzaPreto);
+
+    floodFill(novaImagem,p,novaCorFundo);
+
+    for(int i=0; i<height; i++){
+        for(int j=0; j<width; j++){
+            if(novaImagem.at<uchar>(i,j) == tonDeCinzaBranco){
+                p.x=j;
+                p.y=i;
+                floodFill(novaImagem,p,novaCorObjeto);
+                contadorObjetosSemBuraco++;
+            }else if(novaImagem.at<uchar>(i,j) == tonDeCinzaPreto){
+                p.x=j;
+                p.y=i;
+                floodFill(novaImagem,p,novaCorFundo);
+                contadorObjetosComBuraco++;
+            }
+        }
+    }
+
+    p.x = 0;
+    p.y = 0;
+    floodFill(novaImagem,p,tonDeCinzaPreto);
+
+    cout << "Qtd. objetos: " << contadorObjetosSemBuraco << endl;
+    cout << "Qtd. objetos sem buraco: " << contadorObjetosSemBuraco - contadorObjetosComBuraco << endl;
+    cout << "Qtd. objetos com buraco: " << contadorObjetosComBuraco << endl;
+
+    imshow("bolhas.png", image);
+
+    imwrite("novaImagem.png", novaImagem);
+    imshow("Nova Imagem", novaImagem);
+
+    waitKey();
+    return 0;
+}
+
+----
+
+E após a execução do programa obemos o resultado abaixo:
+
+image::resultbolhas.png[600,600,float="center",align="center"]
 
 
 [.text-center]
