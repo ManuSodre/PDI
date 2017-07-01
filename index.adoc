@@ -347,7 +347,7 @@ int main(int argc, char** argv){
 
 E após a execução do programa obemos o resultado abaixo:
 
-image::resultbolhas.png[600,600,float="center",align="center"]
+image::resultbolhas.png[800,800,float="center",align="center"]
 
 
 [.text-center]
