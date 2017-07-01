@@ -7,7 +7,7 @@
 [.text-center]
 == MANIPULANDO PIXELS EM UMA IMAGEM
 
-=== 3.2 - EXERCÍCIO:
+=== 3.2 - EXERCÍCIO 1:
 
 ==== Regiões:
 
@@ -32,11 +32,8 @@ image::regions.png[500,500,float="center",align="center"]
 
 #include <cv.h>
 #include <highgui.h>
-
 #include <stdio.h>
-
 #include <iostream>
-
 #include <string.h>
 
 using namespace std;
@@ -73,6 +70,15 @@ int main(int, char**){
 }
 
 ----
+
+=== 3.2 - EXERCÍCIO 2:
+  
+[.text-left]  
+  Utilizando o programa exemplos/pixels.cpp como referência, implemente um programa trocaregioes.cpp. Seu programa deverá trocar os quadrantes em diagonal na imagem. Explore o uso da classe Mat e seus construtores para criar as regiões que serão trocadas.
+
+Após implementação e execução do programa trocaregioes.cpp foi obtido o resultado abaixo, já mostrando a imagem de entrada, a imagem em tons de cinza e a imagem com o efeito aplicado.
+
+image::trocaregioes.png[500,500,float="center",align="center"]
 
 [.text-center]
 == ATIVIDADES UNIDADE 2:
