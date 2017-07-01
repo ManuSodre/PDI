@@ -791,7 +791,7 @@ int main(int argc, char** argv){
 <h2 id="_manipulaÇÃo_de_histogramas">MANIPULAÇÃO DE HISTOGRAMAS</h2>
 <div class="sectionbody">
 <div class="sect2 text-center">
-<h3 id="_5_2_exercÍcios">5.2 - EXERCÍCIOS:</h3>
+<h3 id="_5_2_1_exercÍcio">5.2.1 - EXERCÍCIO:</h3>
 <div class="literalblock text-left">
 <div class="content">
 <pre>Utilizando o programa exemplos/histogram.cpp como referência, implemente um programa equalize.cpp. Este deverá, para cada imagem capturada, realizar a equalização do histogram antes de exibir a imagem. Teste sua implementação apontando a câmera para ambientes com iluminações variadas e observando o efeito gerado. Assuma que as imagens processadas serão em tons de cinza.</pre>
@@ -800,7 +800,7 @@ int main(int argc, char** argv){
 </div>
 <div class="sect2">
 <h3 id="_soluÇÃo_3">SOLUÇÃO:</h3>
-<div class="paragraph">
+<div class="paragraph text-left">
 <p>Para este primeiro problema exposto na parte de manipulação de histogramas, o programa utiliza da webcam do dispositivo em que está sendo executado, em que a captura dos frames é feito pela classe VideoCapture. A imagem capturada é então convertida para tons de cinza usando a função cvtColot(Mat, Mat, CV_BGR2GRAY) e essa imagem em tons de cinza tem é equalizada fazendo-se uso da função equalizeHist(Mat, Mat), que tem como entrada a imagem a ser equalizada e a imagem, ou elemento da classe Mat, que irá armazenar a imagem equalizada.</p>
 </div>
 <div class="listingblock text-left">
@@ -916,6 +916,103 @@ int main(int argc, char** argv){
 </div>
 </div>
 </div>
+<div class="sect2 text-center">
+<h3 id="_5_2_2_exercÍcio">5.2.2 - EXERCÍCIO:</h3>
+<div class="literalblock text-left">
+<div class="content">
+<pre>Utilizando o programa exemplos/histogram.cpp como referência, implemente um programa motiondetector.cpp. Este deverá continuamente calcular o histograma da imagem (apenas uma componente de cor é suficiente) e compará-lo com o último histograma calculado. Quando a diferença entre estes ultrapassar um limiar pré-estabelecido, ative um alarme. Utilize uma função de comparação que julgar conveniente.</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_soluÇÃo_4">SOLUÇÃO:</h3>
+<div class="paragraph text-left">
+<p>O programa motiondetector.cpp, assim como o equalize.cpp utiliza a classe VidioCapturepara capturar imagens através de uma webcam disponível no dispositivo em que está sendo executada.</p>
+</div>
+<div class="listingblock text-left">
+<div class="title">motiondetector.cpp</div>
+<div class="content">
+<pre>#include &lt;iostream&gt;
+#include &lt;opencv2/opencv.hpp&gt;
+
+using namespace cv;
+using namespace std;
+
+int main(int argc, char** argv){
+  Mat image;
+  int width, height;
+  VideoCapture cap;
+  Mat hist, oldHist;
+  int nbins = 64;
+  float range[] = {0, 256};
+  const float *histrange = { range };
+  bool uniform = true;
+  bool acummulate = false;
+  cap.open(0);
+
+  if(!cap.isOpened()){
+    cout &lt;&lt; "cameras indisponiveis";
+    return -1;
+  }
+
+  width  = cap.get(CV_CAP_PROP_FRAME_WIDTH);
+  height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+
+  cout &lt;&lt; "largura = " &lt;&lt; width &lt;&lt; endl;
+  cout &lt;&lt; "altura  = " &lt;&lt; height &lt;&lt; endl;
+
+  int histw = nbins, histh = nbins/2;
+  Mat histImg(histh, histw, CV_8UC1, Scalar(0));
+  int count = 0;
+  double histDiff = 0;
+
+  while(1){
+    cap &gt;&gt; image;
+    cvtColor(image, image, CV_BGR2GRAY);
+
+    calcHist(&amp;image, 1, 0, Mat(), hist, 1,
+             &amp;nbins, &amp;histrange,
+             uniform, acummulate);
+    normalize(hist, hist, 0, histImg.rows, NORM_MINMAX, -1, Mat());
+
+    histImg.setTo(Scalar(0));
+
+    for(int i=0; i&lt;nbins; i++){
+      line(histImg, Point(i, histh),
+           Point(i, cvRound(hist.at&lt;float&gt;(i))),
+           Scalar(255), 1, 8, 0);
+   }
+
+    histImg.copyTo(image(Rect(0, 0       ,nbins, histh)));
+    imshow("image", image);
+
+    if(count &gt;=1)
+       histDiff = compareHist(hist, oldHist, 0);
+
+    if( histDiff &lt; 0.98)
+       cout &lt;&lt; "motion detected, histDiff = " &lt;&lt; histDiff &lt;&lt; endl;
+    oldHist = hist.clone();
+    count++;
+    if(waitKey(30) &gt;= 0) break;
+  }
+  return 0;
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Os resultados após execução do programa podem ser vistos nas imagens abaixo:</p>
+</div>
+<div class="imageblock" style="text-align: center;float: center">
+<div class="content">
+<img src="motion.png" alt="800" width="800">
+</div>
+</div>
+<div class="imageblock" style="text-align: center;float: center">
+<div class="content">
+<img src="motion2.png" alt="800" width="800">
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1 text-center">
@@ -936,7 +1033,7 @@ int main(int argc, char** argv){
 </div>
 </div>
 <div class="sect2 text-center">
-<h3 id="_soluÇÃo_4">SOLUÇÃO:</h3>
+<h3 id="_soluÇÃo_5">SOLUÇÃO:</h3>
 <div class="paragraph text-center">
 <p><strong>Filtragem Homomórfica</strong></p>
 </div>
@@ -1200,7 +1297,7 @@ A idéia é usar as bordas produzidas pelo algoritmo de Canny para melhorar a qu
 </div>
 </div>
 <div class="sect2 text-center">
-<h3 id="_soluÇÃo_5">SOLUÇÃO:</h3>
+<h3 id="_soluÇÃo_6">SOLUÇÃO:</h3>
 <div class="paragraph text-left">
 <p>O algoritmo de Canny de fato é útil para diversas aplicações em processamento de imagens e visão artificial. Informações de bordas podem ser usadas para melhorar algoritmos de segmentação automática ou para encontrar objetos em cenas e pontos de interesse. O pontilhismo é uma técnica de desenho impressionista onde o quadro é pintado usando apenas pontos.</p>
 </div>
@@ -1318,7 +1415,7 @@ A idéia é usar as bordas produzidas pelo algoritmo de Canny para melhorar a qu
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-07-01 20:24:57 BRT
+Last updated 2017-07-01 20:40:21 BRT
 </div>
 </div>
 <script type="text/x-mathjax-config">

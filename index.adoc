@@ -353,13 +353,14 @@ image::resultbolhas.png[800,800,float="center",align="center"]
 == MANIPULAÇÃO DE HISTOGRAMAS
 
 [.text-center]
-=== 5.2 - EXERCÍCIOS:
+=== 5.2.1 - EXERCÍCIO:
 
 [.text-left]
   Utilizando o programa exemplos/histogram.cpp como referência, implemente um programa equalize.cpp. Este deverá, para cada imagem capturada, realizar a equalização do histogram antes de exibir a imagem. Teste sua implementação apontando a câmera para ambientes com iluminações variadas e observando o efeito gerado. Assuma que as imagens processadas serão em tons de cinza.
 
 === SOLUÇÃO:
 
+[.text-left]
 Para este primeiro problema exposto na parte de manipulação de histogramas, o programa utiliza da webcam do dispositivo em que está sendo executado, em que a captura dos frames é feito pela classe VideoCapture. A imagem capturada é então convertida para tons de cinza usando a função cvtColot(Mat, Mat, CV_BGR2GRAY) e essa imagem em tons de cinza tem é equalizada fazendo-se uso da função equalizeHist(Mat, Mat), que tem como entrada a imagem a ser equalizada e a imagem, ou elemento da classe Mat, que irá armazenar a imagem equalizada.
 
 .equalize.cpp
@@ -474,6 +475,98 @@ int main(int argc, char** argv){
 E o resultado após a execução do programa está mostrado na imagem abaixo:
 
 image::equalize.png[800,800,float="center",align="center"]
+
+[.text-center]
+=== 5.2.2 - EXERCÍCIO:
+
+[.text-left]
+  Utilizando o programa exemplos/histogram.cpp como referência, implemente um programa motiondetector.cpp. Este deverá continuamente calcular o histograma da imagem (apenas uma componente de cor é suficiente) e compará-lo com o último histograma calculado. Quando a diferença entre estes ultrapassar um limiar pré-estabelecido, ative um alarme. Utilize uma função de comparação que julgar conveniente.
+
+=== SOLUÇÃO:
+
+[.text-left]
+O programa motiondetector.cpp, assim como o equalize.cpp utiliza a classe VidioCapturepara capturar imagens através de uma webcam disponível no dispositivo em que está sendo executada.
+
+.motiondetector.cpp
+
+[source,cpp,numbered]
+[.text-left]
+
+----
+
+#include <iostream>
+#include <opencv2/opencv.hpp>
+
+using namespace cv;
+using namespace std;
+
+int main(int argc, char** argv){
+  Mat image;
+  int width, height;
+  VideoCapture cap;
+  Mat hist, oldHist;
+  int nbins = 64;
+  float range[] = {0, 256};
+  const float *histrange = { range };
+  bool uniform = true;
+  bool acummulate = false;
+  cap.open(0);
+  
+  if(!cap.isOpened()){
+    cout << "cameras indisponiveis";
+    return -1;
+  }
+  
+  width  = cap.get(CV_CAP_PROP_FRAME_WIDTH);
+  height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+
+  cout << "largura = " << width << endl;
+  cout << "altura  = " << height << endl;
+
+  int histw = nbins, histh = nbins/2;
+  Mat histImg(histh, histw, CV_8UC1, Scalar(0));
+  int count = 0; 
+  double histDiff = 0; 
+
+  while(1){   
+    cap >> image;
+    cvtColor(image, image, CV_BGR2GRAY);
+
+    calcHist(&image, 1, 0, Mat(), hist, 1,
+             &nbins, &histrange,
+             uniform, acummulate);
+    normalize(hist, hist, 0, histImg.rows, NORM_MINMAX, -1, Mat());
+
+    histImg.setTo(Scalar(0));
+
+    for(int i=0; i<nbins; i++){
+      line(histImg, Point(i, histh),
+           Point(i, cvRound(hist.at<float>(i))),
+           Scalar(255), 1, 8, 0);
+   }
+    
+    histImg.copyTo(image(Rect(0, 0       ,nbins, histh)));
+    imshow("image", image);
+    
+    if(count >=1)
+       histDiff = compareHist(hist, oldHist, 0);
+   
+    if( histDiff < 0.98)
+       cout << "motion detected, histDiff = " << histDiff << endl;
+    oldHist = hist.clone();
+    count++;
+    if(waitKey(30) >= 0) break;
+  }
+  return 0;
+}
+
+----
+
+Os resultados após execução do programa podem ser vistos nas imagens abaixo:
+
+image::motion.png[800,800,float="center",align="center"]
+
+image::motion2.png[800,800,float="center",align="center"]
 
 [.text-center]
 == ATIVIDADES UNIDADE 2:
