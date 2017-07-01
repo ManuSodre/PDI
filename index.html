@@ -1016,6 +1016,213 @@ int main(int argc, char** argv){
 </div>
 </div>
 <div class="sect1 text-center">
+<h2 id="_filtragem_no_domÍnio_espacial_i">FILTRAGEM NO DOMÍNIO ESPACIAL I</h2>
+<div class="sectionbody">
+<div class="sect2 text-center">
+<h3 id="_6_2_exercÍcio">6.2 - EXERCÍCIO:</h3>
+<div class="literalblock text-left">
+<div class="content">
+<pre>Utilizando o programa exemplos/filtroespacial.cpp como referência, implemente um programa laplgauss.cpp. O programa deverá acrescentar mais uma funcionalidade ao exemplo fornecido, permitindo que seja calculado o laplaciano do gaussiano das imagens capturadas. Compare o resultado desse filtro com a simples aplicação do filtro laplaciano.</pre>
+</div>
+</div>
+</div>
+<div class="sect2 text-center">
+<h3 id="_soluÇÃo_5">SOLUÇÃO:</h3>
+<div class="paragraph text-left">
+<p>Para obter o resultado do laplaciano do gaussiano é necessário filtrar a imagem dada com um filtro gaussiano e, logo após, utilizar o filtro laplaciano no resultado da filtragem anterior.</p>
+</div>
+<div class="listingblock text-left">
+<div class="title">lapgauss.cpp</div>
+<div class="content">
+<pre>#include &lt;iostream&gt;
+#include &lt;opencv2/opencv.hpp&gt;
+
+using namespace cv;
+using namespace std;
+
+void printmask(Mat &amp;m){
+  for(int i=0; i&lt;m.size().height; i++){
+    for(int j=0; j&lt;m.size().width; j++){
+      cout &lt;&lt; m.at&lt;float&gt;(i,j) &lt;&lt; ",";
+    }
+    cout &lt;&lt; endl;
+  }
+}
+
+void menu(){
+  cout &lt;&lt; "\npressione a tecla para ativar o filtro: \n"
+  "a - calcular modulo\n"
+    "m - media\n"
+    "g - gauss\n"
+    "v - vertical\n"
+  "h - horizontal\n"
+    "l - laplaciano\n"
+    "x - laplaciano do gaussiano\n"
+  "esc - sair\n";
+}
+
+int main(int argvc, char** argv){
+  VideoCapture video;
+  float media[] = {1,1,1,
+           1,1,1,
+           1,1,1};
+  float gauss[] = {1,2,1,
+           2,4,2,
+           1,2,1};
+  float horizontal[]={-1,0,1,
+            -2,0,2,
+            -1,0,1};
+  float vertical[]={-1,-2,-1,
+          0,0,0,
+          1,2,1};
+  float laplacian[]={0,-1,0,
+           -1,4,-1,
+           0,-1,0};
+
+  Mat cap, frame, frame32f, frameFiltered, frameFiltered1;
+  Mat mask(3,3,CV_32F), mask1;
+  Mat result, result1;
+  double width, height;
+  int absolut;
+  char key;
+  bool laplgauss = false;
+
+  video.open(0);
+  if(!video.isOpened())
+    return -1;
+
+  width=video.get(CV_CAP_PROP_FRAME_WIDTH);
+  height=video.get(CV_CAP_PROP_FRAME_HEIGHT);
+
+  cout &lt;&lt; "largura=" &lt;&lt; width &lt;&lt; "\n";;
+  cout &lt;&lt; "altura =" &lt;&lt; height&lt;&lt; "\n";;
+
+  namedWindow("filtroespacial",1);
+
+  mask = Mat(3, 3, CV_32F, media);
+  scaleAdd(mask, 1/9.0, Mat::zeros(3,3,CV_32F), mask1);
+  swap(mask, mask1);
+  absolut=1;
+
+  menu();
+  for(;;){
+    video &gt;&gt; cap;
+    cvtColor(cap, frame, CV_BGR2GRAY);
+    flip(frame, frame, 1);
+    imshow("original", frame);
+    frame.convertTo(frame32f, CV_32F);
+
+    if(laplgauss){
+      mask = Mat(3, 3, CV_32F, gauss);
+      scaleAdd(mask, 1/16.0, Mat::zeros(3,3,CV_32F), mask1);
+      mask = mask1;
+      filter2D(frame32f, frameFiltered, frame32f.depth(), mask, Point(1,1), 0);
+      mask = Mat(3, 3, CV_32F, laplacian);
+      filter2D(frameFiltered, frameFiltered1, frameFiltered.depth(), mask, Point(1,1), 0);
+
+      if(absolut){
+        frameFiltered1=abs(frameFiltered1);
+      }
+
+      frameFiltered1.convertTo(result1, CV_8U);
+      imshow("filtroespacial", result1);
+    }
+    else{
+      filter2D(frame32f, frameFiltered, frame32f.depth(), mask, Point(1,1), 0);
+
+      if(absolut){
+        frameFiltered=abs(frameFiltered);
+      }
+
+      frameFiltered.convertTo(result, CV_8U);
+      imshow("filtroespacial", result);
+    }
+
+    key = (char) waitKey(10);
+    if( key == 27 ) break; // esc pressed!
+    switch(key){
+    case 'a':
+    laplgauss = false;
+      menu();
+      absolut=!absolut;
+      break;
+    case 'm':
+      menu();
+      mask = Mat(3, 3, CV_32F, media);
+      scaleAdd(mask, 1/9.0, Mat::zeros(3,3,CV_32F), mask1);
+      mask = mask1;
+      printmask(mask);
+      laplgauss = false;
+
+      break;
+    case 'g':
+      menu();
+      mask = Mat(3, 3, CV_32F, gauss);
+      scaleAdd(mask, 1/16.0, Mat::zeros(3,3,CV_32F), mask1);
+      mask = mask1;
+      printmask(mask);
+      laplgauss = false;
+
+      break;
+    case 'h':
+      menu();
+      mask = Mat(3, 3, CV_32F, horizontal);
+      printmask(mask);
+      laplgauss = false;
+
+      break;
+    case 'v':
+      menu();
+      mask = Mat(3, 3, CV_32F, vertical);
+      printmask(mask);
+      laplgauss = false;
+
+      break;
+    case 'l':
+      menu();
+      mask = Mat(3, 3, CV_32F, laplacian);
+      printmask(mask);
+      laplgauss = false;
+
+      break;
+    case 'x':
+     laplgauss = true;
+     menu();
+
+     break;
+    default:
+      break;
+    }
+  }
+  return 0;
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Após a execução do programa podemos obter os resultados abaixo.
+- Imagem processada com o filtro laplaciano:</p>
+</div>
+<div class="imageblock" style="text-align: center;float: center">
+<div class="content">
+<img src="laplaciano.png" alt="600" width="600">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Imagem processada com o Lapgauss, em que podemos observar uma certa quantidade menor de ruido:</p>
+</li>
+</ul>
+</div>
+<div class="imageblock" style="text-align: center;float: center">
+<div class="content">
+<img src="lapgauss.png" alt="600" width="600">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 text-center">
 <h2 id="_atividades_unidade_2">ATIVIDADES UNIDADE 2:</h2>
 <div class="sectionbody">
 
@@ -1033,7 +1240,7 @@ int main(int argc, char** argv){
 </div>
 </div>
 <div class="sect2 text-center">
-<h3 id="_soluÇÃo_5">SOLUÇÃO:</h3>
+<h3 id="_soluÇÃo_6">SOLUÇÃO:</h3>
 <div class="paragraph text-center">
 <p><strong>Filtragem Homomórfica</strong></p>
 </div>
@@ -1297,7 +1504,7 @@ A idéia é usar as bordas produzidas pelo algoritmo de Canny para melhorar a qu
 </div>
 </div>
 <div class="sect2 text-center">
-<h3 id="_soluÇÃo_6">SOLUÇÃO:</h3>
+<h3 id="_soluÇÃo_7">SOLUÇÃO:</h3>
 <div class="paragraph text-left">
 <p>O algoritmo de Canny de fato é útil para diversas aplicações em processamento de imagens e visão artificial. Informações de bordas podem ser usadas para melhorar algoritmos de segmentação automática ou para encontrar objetos em cenas e pontos de interesse. O pontilhismo é uma técnica de desenho impressionista onde o quadro é pintado usando apenas pontos.</p>
 </div>
@@ -1415,7 +1622,7 @@ A idéia é usar as bordas produzidas pelo algoritmo de Canny para melhorar a qu
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-07-01 20:40:21 BRT
+Last updated 2017-07-01 20:56:16 BRT
 </div>
 </div>
 <script type="text/x-mathjax-config">
