@@ -755,7 +755,8 @@ int main(int argvc, char** argv){
 
 ----
 
-Após a execução do programa podemos obter os resultados abaixo.
+Após a execução do programa podemos obter os resultados abaixo:
+
 - Imagem processada com o filtro laplaciano:
 
 image::laplaciano.png[600,600,float="center",align="center"]
