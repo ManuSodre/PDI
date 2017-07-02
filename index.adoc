@@ -765,6 +765,125 @@ image::laplaciano.png[600,600,float="center",align="center"]
 
 image::lapgauss.png[600,600,float="center",align="center"]
 
+
+[.text-center]
+== FILTRAGEM NO DOMÍNIO ESPACIAL 2
+
+[.text-center]
+=== 7.2.1 - EXERCÍCIO:
+
+  Utilizando o programa exemplos/addweighted.cpp como referência, implemente um programa tiltshift.cpp. Três ajustes deverão ser providos na tela da interface:
+
+  -Um ajuste para regular a altura da região central que entrará em foco;
+  -Um ajuste para regular a força de decaimento da região borrada;
+  -Um ajuste para regular a posição vertical do centro da região que entrará em foco. Finalizado o programa, a imagem produzida deverá ser salva em arquivo.  
+
+[.text-center]
+=== SOLUÇÃO:
+
+[.text-left]
+A técnica fotográfica de tilt-shift envolve o uso de deslocamentos e rotações entre a lente e o plano de projeção (onde fica filme fotográfico ou o sensor da câmera) de modo a desfocar seletivamente regiões do assunto.
+A ideia é pegar a imagem original e somá-la com ela própia borrada, com as proporções adequadas para simular o efeito.
+Foi utilizado o filtro da média, que gera o borramento. Para que efeito fique bastante evidente, o efeito foi aplicado 40 vezes.
+
+.tiltshift.cpp
+
+[source,cpp,numbered]
+[.text-left]
+
+----
+
+#include <iostream>
+#include <opencv2/opencv.hpp>
+#include <cmath>
+
+using namespace cv;
+using namespace std;
+
+int d_slider = 0;
+int d_max = 100;
+
+int sup_slider = 0;
+int sup_max;
+
+int inf_slider = 0;
+int inf_max;
+
+Mat original, borrada, final ;
+Mat imageTop;
+
+char TrackbarName[50];
+
+double calcAlpha(double x, double l1, double l2, double d){
+  return 0.5*(tanh((x-l1)/d) - tanh((x-l2)/d));
+}
+
+void blend(int, void*){
+ for (int i = 0; i < original.rows ; i++)
+ {
+   double alpha = calcAlpha(i,sup_slider,inf_slider,d_slider);
+   addWeighted(original.row(i),alpha, borrada.row(i),1-alpha,0.0,final.row(i));
+ }
+ imshow("resultado", final);
+ imwrite("resutTiltShift.jpg", final);
+}
+
+int main(int argvc, char** argv){
+
+  original = imread("india.jpg");
+  original.copyTo(borrada);
+  original.copyTo(final);
+  namedWindow("resultado", 1);
+
+  float media[] = {1,1,1,
+           1,1,1,
+           1,1,1};
+  Mat mask(3,3,CV_32F), mask1;
+
+  mask = Mat(3, 3, CV_32F, media);
+  scaleAdd(mask, 1/9.0, Mat::zeros(3,3,CV_32F), mask1);
+  mask = mask1;
+
+  for (int i = 0; i < 40; ++i)
+  {
+    filter2D(original, borrada, original.depth(), mask, Point(1,1), 0);
+  }
+
+  sup_max = original.rows;
+  inf_max = original.rows;
+
+  sprintf( TrackbarName, "Decaimento");
+  createTrackbar( TrackbarName, "resultado",
+          &d_slider,
+          d_max,
+          blend );
+  blend(d_slider, 0 );
+
+  sprintf( TrackbarName, "Limite superior");
+  createTrackbar( TrackbarName, "resultado",
+          &sup_slider,
+          sup_max,
+          blend);
+  blend(sup_slider, 0 );
+
+  sprintf( TrackbarName, "Limite inferior");
+  createTrackbar( TrackbarName, "resultado",
+          &inf_slider,
+          inf_max,
+          blend );
+  blend(inf_slider, 0 );
+
+
+  waitKey(0);
+  return 0;
+}
+
+----
+
+Após a execução do programa, ele salva a imagem gerada automáticamente, e podemos ter como um resultado exemplo após ajuste dos parametros das trackbars a imagem abaixo:
+
+image::resultadotilt.png[600,600,float="center",align="center"]
+
 [.text-center]
 == ATIVIDADES UNIDADE 2:
 :stem: latexmath
