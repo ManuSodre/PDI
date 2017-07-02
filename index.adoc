@@ -772,8 +772,8 @@ image::lapgauss.png[600,600,float="center",align="center"]
 [.text-center]
 === 7.2.1 - EXERCÍCIO:
 
+[.text-left]
   Utilizando o programa exemplos/addweighted.cpp como referência, implemente um programa tiltshift.cpp. Três ajustes deverão ser providos na tela da interface:
-
   -Um ajuste para regular a altura da região central que entrará em foco;
   -Um ajuste para regular a força de decaimento da região borrada;
   -Um ajuste para regular a posição vertical do centro da região que entrará em foco. Finalizado o programa, a imagem produzida deverá ser salva em arquivo.  
@@ -880,6 +880,7 @@ int main(int argvc, char** argv){
 
 ----
 
+[.text-left]
 Após a execução do programa, ele salva a imagem gerada automáticamente, e podemos ter como um resultado exemplo após ajuste dos parametros das trackbars a imagem abaixo:
 
 image::resultadotilt.png[600,600,float="center",align="center"]
